@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import {RouterProvider} from "react-router-dom";
 import {router} from "./router";
+import {ThemeProvider} from "@/context/ThemeContext.tsx";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     /**
@@ -17,6 +18,8 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
      </React.StrictMode>
      **/
     <React.StrictMode>
-        <RouterProvider router={router}/>
+        <ThemeProvider>
+            <RouterProvider router={router}/>
+        </ThemeProvider>
     </React.StrictMode>
 );
