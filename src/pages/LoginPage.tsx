@@ -1,45 +1,62 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import {useAuth} from "@/context/AuthContext.tsx";
+import {useLanguage} from "@/context/LanguageContext.tsx";
 
-import es from "../locales/es.json";
-import en from "../locales/en.json";
-const translations = { es, en } as const;
-export type Language = "es" | "en";
+
+
 
 export default function LoginPage() {
-    // TODO
-    //const {login} = useAuth();
-    const login = (username:string)=>{
-        console.log(`Autenticado comom ${username}`);
-    }
 
-    //const {t} = useLanguage();
-    /* --------------------------- */
-    // Eliminar
-    const language:Language = "es";
-    const t = (key:string):string => {
-        // @ts-ignore
-        return translations[language][key];
-    }
-    /* --------------------------- */
+    const { login } = useAuth();
+    const { t } = useLanguage();
+
+    const navigate = useNavigate();
+
 
 
     const [name, setName] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
-    const handleSubmit = (e: React.FormEvent) => {
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!name.trim()) return;
-        login(name.trim());
+        setError(null);
 
+        const username = name.trim();
+        if (!username) return;
+
+        setIsLoading(true);
+
+
+        const success = await login(username, "password");
+
+        setIsLoading(false);
+
+        if (success) {
+
+            navigate("/");
+        } else {
+
+            setError(t("loginError"));
+        }
     };
 
     return (
         <section className="max-w-md bg-white dark:bg-slate-800 rounded-xl shadow-md p-6 space-y-4">
             <div>
+
                 <h2 className="text-xl font-semibold">{t("loginTitle")}</h2>
                 <p className="text-sm text-slate-600 dark:text-slate-300">
                     {t("loginDescription")}
                 </p>
             </div>
+
+
+            {error && (
+                <p className="text-red-500 text-sm">{error}</p>
+            )}
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-3">
                 <input
@@ -52,16 +69,18 @@ export default function LoginPage() {
 
                 <button
                     type="submit"
-                    disabled={!name.trim()}
+
+                    disabled={!name.trim() || isLoading}
                     className="px-4 py-2 rounded-md bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700 disabled:opacity-50"
                 >
-                    {t("loginButton")}
+
+                    {isLoading ? t("loggingIn") : t("loginButton")}
                 </button>
             </form>
 
             <p className="text-[11px] text-slate-500 dark:text-slate-400">
                 En la app real, aquí llamaríamos a una API. En esta demo solo guardamos
-                el nombre en el contexto global.
+                el nombre en el contexto global. (Credenciales de prueba: 'test@user.com' y 'password')
             </p>
         </section>
     );

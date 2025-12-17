@@ -1,5 +1,6 @@
-import {createContext, useState, type ReactNode, useEffect, useContext} from 'react';
+// src/context/ThemeContext.tsx (CÓDIGO CORREGIDO)
 
+import {createContext, useState, type ReactNode, useEffect, useContext} from 'react';
 
 type Theme = 'light' | 'dark';
 
@@ -15,22 +16,21 @@ type ThemeProviderProps = {
 };
 
 
-    export function ThemeProvider({ children }: ThemeProviderProps) {
-        const [theme, setTheme] = useState<Theme>(() => {
-
-            if (typeof window !== "undefined") {
-                const savedTheme = localStorage.getItem("theme");
-                return (savedTheme as Theme) || 'light';
-            }
-            return 'light';
-        });
+export function ThemeProvider({ children }: ThemeProviderProps) {
+    const [theme, setTheme] = useState<Theme>(() => {
+        if (typeof window !== "undefined") {
+            const savedTheme = localStorage.getItem("theme");
+            return (savedTheme as Theme) || 'light';
+        }
+        return 'light';
+    });
 
     useEffect(() => {
         const root = window.document.documentElement;
         root.classList.remove("light", "dark");
         root.classList.add(theme);
         localStorage.setItem("theme", theme);
-    }, []);
+    }, [theme]);
 
     const toggleTheme = () => {
         setTheme((prev)=>(prev === 'light' ? 'dark' : 'light'));
@@ -47,6 +47,7 @@ type ThemeProviderProps = {
         </themeContext.Provider>
     );
 }
+
 export function useTheme() {
     const ctx=useContext(themeContext);
     if (!ctx) {
@@ -54,4 +55,3 @@ export function useTheme() {
     }
     return ctx
 }
-

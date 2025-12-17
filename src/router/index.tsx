@@ -1,24 +1,14 @@
+// src/router.tsx
+
 import {createBrowserRouter, Navigate, Outlet,} from "react-router-dom";
 
 import Layout from "@/layout/Layout.tsx";
 import LoginPage from "@/pages/LoginPage.tsx";
 import HomePage from "@/pages/HomePage.tsx";
+import { RequireAuth } from "@/component/RequireAuth";
 
-// Ruta protegida: solo deja pasar si hay usuario
-function RequireAuth() {
-    // TODO
-    //const {user} = useAuth();
-    /* --------------------------- */
-    const user = {name:"John Doe"};
 
-    /* --------------------------- */
-    if (!user) {
-        return <Navigate to="/login" replace/>;
-    }
-    return <Outlet/>;
-}
 
-// Wrapper para usar Layout + Outlet
 function LayoutWrapper() {
     return (
         <Layout>
@@ -37,10 +27,11 @@ export const router = createBrowserRouter([
                 element: <LoginPage/>,
             },
             {
+
                 element: <RequireAuth/>,
                 children: [
                     {
-                        index: true, // "/"
+                        index: true,
                         element: <HomePage/>,
                     },
                 ],
